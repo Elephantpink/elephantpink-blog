@@ -1,0 +1,40 @@
+<?php
+
+namespace EPink\Blog\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreCategory extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        $categoryId = $this->route('category') ? $this->route('category')->id : null;
+
+        if($categoryId) {
+            return [
+                "name" => "required|max:255|unique:blog_categories,name,$categoryId",
+                "description" => "nullable"
+            ];
+        } else {
+            return [
+                "name" => "required|max:255|unique:blog_categories,name",
+                "description" => "nullable"
+            ];
+        }
+    }
+}
