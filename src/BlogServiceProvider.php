@@ -23,6 +23,7 @@ class BlogServiceProvider extends ServiceProvider
 
       $this->publishes([
           __DIR__.'/../database/migrations' => database_path('migrations'),
+          __DIR__.'/../database/seeds' => database_path('seeds')
       ], 'epink-blog-migrations');
 
       $this->publishes([
