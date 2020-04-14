@@ -30,7 +30,7 @@ class BlogServiceProvider extends ServiceProvider
       $this->publishes([
         __DIR__.'/../resources/js' => base_path('resources/js/blog'),
         __DIR__.'/../resources/sass' => base_path('resources/sass/blog'),
-        __DIR__.'/../resources/svg' => base_path('resources/sass/svg')
+        __DIR__.'/../resources/svg' => base_path('resources/svg')
       ], 'epink-blog-assets');
     }
 
