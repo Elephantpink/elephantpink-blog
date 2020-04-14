@@ -33,7 +33,7 @@ In order to use these components you'll need to install the following node packa
 To do so execute:
 
 ```
- npm install lang.js laravel-mix-svg-vue svg-vue vue vue-router vuex vue-quill-editor vue-cropperjs
+ npm install lang.js laravel-mix-svg-vue svg-vue vue vue-template-compiler vue-router vuex vue-quill-editor vue-cropperjs
 ```
 
 
