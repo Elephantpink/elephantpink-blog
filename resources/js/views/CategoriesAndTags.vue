@@ -74,48 +74,48 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <transition name="fade">
-        <div class="overlay" @click="showEditingModal = false" v-show="showEditingModal">
-          <div class="form-wrapper" @click.stop="">
-            <button type="button" class="btn-close" @click="showEditingModal = false">
-              {{ $root.trans('blog_admin.categories_and_tags.close') }} X
-            </button>
-            <form @submit.prevent="submitEdit()">
-              <div class="form-container">
-                <label for="edit-title">
-                  {{ editTitle }}
-                </label>
-                <input type="text" name="edit-title" v-model="editModel.name">
-                <div class="errors">
-                  <span v-for="(error, index) in errors.edit.name" :key="'error-name-' + index">
-                    {{ error }}
-                  </span>
-                </div>
-                <label for="edit-description">
-                  {{ editDescription }}
-                </label>
-                <input type="text" name="edit-description" v-model="editModel.description">
-                <div class="errors">
-                  <span v-for="(error, index) in errors.edit.description" :key="'error-description-' + index">
-                    {{ error }}
-                  </span>
-                </div>
-                <span class="last-modified">
-                  {{ $root.trans('blog_admin.categories_and_tags.last_modified')}}: 
-                  <span>{{ parseUpdatedAt }}</span>
+    <transition name="fade">
+      <div class="overlay" @click="showEditingModal = false" v-show="showEditingModal">
+        <div class="form-wrapper" @click.stop="">
+          <button type="button" class="btn-close" @click="showEditingModal = false">
+            {{ $root.trans('blog_admin.categories_and_tags.close') }} X
+          </button>
+          <form @submit.prevent="submitEdit()">
+            <div class="form-container">
+              <label for="edit-title">
+                {{ editTitle }}
+              </label>
+              <input type="text" name="edit-title" v-model="editModel.name">
+              <div class="errors">
+                <span v-for="(error, index) in errors.edit.name" :key="'error-name-' + index">
+                  {{ error }}
                 </span>
               </div>
-              <div class="buttons-container">
-                <button type="submit" class="cta full">
-                  {{ $root.trans('blog_admin.categories_and_tags.save_changes') }}
-                </button>
+              <label for="edit-description">
+                {{ editDescription }}
+              </label>
+              <input type="text" name="edit-description" v-model="editModel.description">
+              <div class="errors">
+                <span v-for="(error, index) in errors.edit.description" :key="'error-description-' + index">
+                  {{ error }}
+                </span>
               </div>
-            </form>
-          </div>
+              <span class="last-modified">
+                {{ $root.trans('blog_admin.categories_and_tags.last_modified')}}: 
+                <span>{{ parseUpdatedAt }}</span>
+              </span>
+            </div>
+            <div class="buttons-container">
+              <button type="submit" class="cta full">
+                {{ $root.trans('blog_admin.categories_and_tags.save_changes') }}
+              </button>
+            </div>
+          </form>
         </div>
-      </transition>
-    </div>
+      </div>
+    </transition>
 
     <transition name="fade">
       <div class="overlay" v-show="showConfirmDeleteModal" @click="closeConfirmDeleteModal()">

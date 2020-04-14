@@ -125,7 +125,7 @@
                   class="password-confirm-error"
                   v-show="!passwordConfirmValid"
                 >
-                  {{ $root.trans('blog_admin.authors.password_not_match') }}
+                  {{ $root.trans('blog_admin.authors.passwords_not_match') }}
                 </span>
               </div>
               <div class="field-container">
