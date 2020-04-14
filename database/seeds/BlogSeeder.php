@@ -55,8 +55,8 @@ class BlogSeeder extends Seeder
             'slug' => 'lorem-ipsum',
             'subtitle' => 'Dolor sit amet',
             'excerpt' => 'The standard Lorem Ipsum passage, used since the 1500s',
-            'thumbnail_url' => '/storage/lorem-ipsum-thumb-956436.png',
-            'header_image_url' => '/storage/lorem-ipsum-707537.png',
+            'thumbnail_url' => '/storage/post1_thumb.png',
+            'header_image_url' => '/storage/post1_cover.jpg',
             'author_id' => $default_author->id,
             'body' => '<h3>The standard Lorem Ipsum passage, used since the 1500s</h3>
             <p class="ql-align-justify">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed 
@@ -126,8 +126,8 @@ class BlogSeeder extends Seeder
             'slug' => 'pellentesque-vitae-faucibus-elit',
             'subtitle' => '',
             'excerpt' => 'Pellentesque vitae faucibus elit. Ut mollis vel turpis eu dictum. Mauris ultrices feugiat ante, quis vestibulum lorem porttitor',
-            'thumbnail_url' => '',
-            'header_image_url' => '',
+            'thumbnail_url' => '/storage/post2_thumb.png',
+            'header_image_url' => '/storage/post2_cover.jpg',
             'author_id' => $default_author->id,
             'body' => '<p class="ql-align-justify">Pellentesque vitae faucibus elit. Ut mollis vel 
             turpis eu dictum. Mauris ultrices feugiat ante, quis vestibulum lorem porttitor ultricies. 
@@ -187,8 +187,8 @@ class BlogSeeder extends Seeder
             'slug' => 'curabitur-a-velit-vel-justo-euismod-commodo',
             'subtitle' => '',
             'excerpt' => 'Curabitur a velit vel justo euismod commodo. Aliquam gravida rhoncus metus, quis vestibulum nibh porta et. Vestibulum ante ipsum',
-            'thumbnail_url' => '',
-            'header_image_url' => '',
+            'thumbnail_url' => '/storage/post3_thumb.png',
+            'header_image_url' => '/storage/post3_cover.jpg',
             'author_id' => $default_author->id,
             'body' => '<p class="ql-align-justify">Curabitur a velit vel justo euismod commodo. 
             Aliquam gravida rhoncus metus, quis vestibulum nibh porta et. Vestibulum ante ipsum 
@@ -229,8 +229,8 @@ class BlogSeeder extends Seeder
             'slug' => 'suspendisse-imperdiet-nibh-vel-sapien-venenatis-molestie',
             'subtitle' => 'Quisque nunc nisi',
             'excerpt' => 'Suspendisse imperdiet nibh vel sapien venenatis molestie. Quisque nunc nisi, accumsan eu tempor non, consequat sed nisl. Vestibu',
-            'thumbnail_url' => '',
-            'header_image_url' => '',
+            'thumbnail_url' => '/storage/post4_thumb.png',
+            'header_image_url' => '/storage/post4_cover.jpg',
             'author_id' => $default_author->id,
             'body' => '<p class="ql-align-justify">Suspendisse imperdiet nibh vel sapien venenatis 
             molestie. Quisque nunc nisi, accumsan eu tempor non, consequat sed nisl. Vestibulum eu 
