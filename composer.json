@@ -49,10 +49,5 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0"
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "npm install --save cropperjs lang.js svg-vue vue vue-cropperjs vue-quill-editor vue-router vuex"
-        ]
     }
 }
