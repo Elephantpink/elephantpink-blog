@@ -17,7 +17,9 @@ class TagController extends Controller
     {
         try {
             
-            return response()->json(['tags' => Tag::all()], 200);
+            return response()->json([
+                'tags' => Tag::all()
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -38,7 +40,9 @@ class TagController extends Controller
 
             $tag = Tag::create($validated);
 
-            return response()->json(['tag' => $tag], 200);
+            return response()->json([
+                'tag' => $tag
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -54,7 +58,11 @@ class TagController extends Controller
     public function show(Tag $tag)
     {
         try {
-            return response()->json(['tag' => $tag], 200);
+
+            return response()->json([
+                'tag' => $tag
+            ], 200);
+
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
         } 
@@ -75,7 +83,9 @@ class TagController extends Controller
 
             $tag->update($validated);
 
-            return response()->json(['tag' => $tag]);
+            return response()->json([
+                'tag' => $tag
+            ]);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -102,7 +112,9 @@ class TagController extends Controller
 
             $tag->delete();
 
-            return response()->json(['tag_posts' => $tag_posts_ids], 200);
+            return response()->json([
+                'tag_posts' => $tag_posts_ids
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);

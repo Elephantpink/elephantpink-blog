@@ -18,7 +18,9 @@ class PostController extends Controller
     {
         try {
 
-            return response()->json(['posts' => PostResource::collection(Post::all())], 200);
+            return response()->json([
+                'posts' => PostResource::collection(Post::all())
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -39,7 +41,9 @@ class PostController extends Controller
 
             $post = Post::create($validated);
 
-            return response()->json(['post' => new PostResource($post)], 200);
+            return response()->json([
+                'post' => new PostResource($post)
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -55,7 +59,11 @@ class PostController extends Controller
     public function show(Post $post)
     {
         try {
-            return response()->json(['post' => new PostResource($post)], 200);
+
+            return response()->json([
+                'post' => new PostResource($post)
+            ], 200);
+
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
         } 
@@ -76,7 +84,9 @@ class PostController extends Controller
 
             $post->update($validated);
 
-            return response()->json(['post' => new PostResource($post)], 200);
+            return response()->json([
+                'post' => new PostResource($post)
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);

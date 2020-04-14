@@ -18,7 +18,9 @@ class CategoryController extends Controller
     {
         try {
             
-            return response()->json(['categories' => Category::all()], 200);
+            return response()->json([
+                'categories' => Category::all()
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -41,7 +43,9 @@ class CategoryController extends Controller
 
             $category = Category::create($validated);
 
-            return response()->json(['category' => $category], 200);
+            return response()->json([
+                'category' => $category
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -57,7 +61,11 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         try {
-            return response()->json(['category' => $category], 200);
+
+            return response()->json([
+                'category' => $category
+            ], 200);
+
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
         } 
@@ -78,7 +86,9 @@ class CategoryController extends Controller
 
             $category->update($validated);
 
-            return response()->json(['category' => $category], 200);
+            return response()->json([
+                'category' => $category
+            ], 200);
             
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -105,7 +115,9 @@ class CategoryController extends Controller
 
             $category->delete();
 
-            return response()->json(['category_posts' => $category_posts_ids], 200);
+            return response()->json([
+                'category_posts' => $category_posts_ids
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);

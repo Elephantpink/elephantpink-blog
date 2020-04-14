@@ -41,7 +41,9 @@ class PublishController extends Controller
 
             $new_post->refresh();
     
-            return response()->json(['post' => new PostResource($new_post)], 200);
+            return response()->json([
+                'post' => new PostResource($new_post)
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -97,7 +99,10 @@ class PublishController extends Controller
 
                 $post->refresh();
         
-                return response()->json(['post' => new PostResource($post)], 200);
+                return response()->json([
+                    'post' => new PostResource($post)
+                ], 200);
+
             } else {
                 return response()->json(['errors' => $post_validated->errors()], 400);
             }
@@ -110,6 +115,7 @@ class PublishController extends Controller
     public function deletePost(Post $post)
     {
         try {
+            
             PostCategory::where('post_id', $post->id)->delete();
             PostTag::where('post_id', $post->id)->delete();
 

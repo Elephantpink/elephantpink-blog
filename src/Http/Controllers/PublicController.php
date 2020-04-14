@@ -16,10 +16,16 @@ class PublicController extends Controller
 {
   public function getData()
   {
-    return response()->json([
-      'categories' => CategoryResource::collection(Category::all()),
-      'posts' => PostResource::collection(Post::where('publish_date', '<', Carbon::now())->orWhereNull('publish_date')->get()),
-      'tags' => TagResource::collection(Tag::all())
-    ]);
+    try {
+
+      return response()->json([
+        'categories' => CategoryResource::collection(Category::all()),
+        'posts' => PostResource::collection(Post::where('publish_date', '<', Carbon::now())->orWhereNull('publish_date')->get()),
+        'tags' => TagResource::collection(Tag::all())
+      ]);
+
+    } catch (\Exception $e) {
+      return response()->json(['message' => 'Unexpected server error'], 500);
+    }
   }
 }

@@ -18,7 +18,9 @@ class AuthorController extends Controller
     {
         try {
 
-            return response()->json(['authors' => Author::all()], 200);
+            return response()->json([
+                'authors' => Author::all()
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -41,7 +43,9 @@ class AuthorController extends Controller
 
             $author = Author::create($validated);
 
-            return response()->json(['author' => $author], 200);
+            return response()->json([
+                'author' => $author
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -57,7 +61,11 @@ class AuthorController extends Controller
     public function show(Author $author)
     {
         try {
-            return response()->json(['author' => $author], 200);
+
+            return response()->json([
+                'author' => $author
+            ], 200);
+
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
         } 
@@ -103,9 +111,12 @@ class AuthorController extends Controller
                     ]);
                 }
         
-                return response()->json(['author' => $author], 200);
+                return response()->json([
+                    'author' => $author
+                ], 200);
+
             } else {
-                return response()->json(['message' => 'Only admin users can edit other users'], 200);
+                return response()->json(['message' => 'Only admin users can edit other users'], 401);
             }
 
         } catch (\Exception $e) {
