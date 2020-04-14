@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54 (76480) - https://sketchapp.com -->
+    <title>Oval</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="POST_DETAIL-Copy" transform="translate(-674.000000, -412.000000)">
+            <g id="Oval" transform="translate(674.000000, 412.000000)">
+                <circle fill="#0A1026" cx="11" cy="11" r="11"></circle>
+                <g id="close-(4)" stroke-width="1" transform="translate(7.000000, 7.000000)" fill="#FFFFFF">
+                    <polygon id="Path" fill-rule="nonzero" points="8 0.942702636 7.05729736 0 3.99998966 3.05728702 0.942702636 0 0 0.942702636 3.05728702 3.99998966 1.47008715e-16 7.05729736 0.942702636 8 3.99998966 4.94271298 7.05727667 8 7.99997931 7.05729736 4.94271298 3.99998966"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
