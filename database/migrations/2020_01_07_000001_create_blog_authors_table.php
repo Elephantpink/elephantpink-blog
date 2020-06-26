@@ -18,10 +18,6 @@ class CreateBlogAuthorsTable extends Migration
             $table->string('email', 255)->unique();
             $table->string('name', 255);
             $table->string('password');
-            $table->text('additional_information')->nullable();
-            $table->boolean('is_admin')->default(0);
-            $table->boolean('is_disabled')->default(0);
-            $table->dateTime('last_login')->nullable();
             $table->timestamps();
         });
     }

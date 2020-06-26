@@ -15,6 +15,8 @@ class Category extends Model
 
     public function posts()
     {
-        return $this->hasManyThrough("EPink\Blog\Models\Post", "EPink\Blog\Models\PostCategory", "post_id", "id");
+        return $this->hasManyThrough(Post::class,
+                                    PostCategory::class,
+                                    "post_id", "id");
     }
 }

@@ -2,10 +2,14 @@
 
 namespace EPink\Blog\Http\Controllers;
 
-use EPink\Blog\Http\Controllers\Controller;
 use EPink\Blog\Http\Requests\StorePost;
 use EPink\Blog\Http\Resources\PostResource;
 use EPink\Blog\Models\Post;
+use EPink\Blog\Models\PostCategory;
+use EPink\Blog\Models\PostTag;
+use EPink\Blog\Models\PostTranslation;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -17,7 +21,6 @@ class PostController extends Controller
     public function index()
     {
         try {
-
             return response()->json([
                 'posts' => PostResource::collection(Post::all())
             ], 200);
@@ -46,10 +49,10 @@ class PostController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Unexpected server error'], 500);
+            return response()->json(['message' => 'Unexpected server error.'], 500);
         }
     }
-    
+
     /**
      * Display the specified resource.
      *
@@ -66,7 +69,7 @@ class PostController extends Controller
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
-        } 
+        }
     }
 
     /**
@@ -102,12 +105,34 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         try {
-            
+
+            DB::beginTransaction();
+
+            PostCategory::where('post_id', $post->id)->delete();
+
+            PostTag::where('post_id', $post->id)->delete();
+
+            PostTranslation::where('post_id',$post->id)->delete();
+
+            //also delete related files
+            if(!empty($post->thumbnail_url) && file_exists(storage_path("/app/public/") ."/".$post->thumbnail_url))
+            {
+                Storage::delete(storage_path("/app/public/") ."/".$post->thumbnail_url);
+            }
+
+            if(!empty($post->header_image_url) && file_exists(storage_path("/app/public/") ."/".$post->header_image_url))
+            {
+                Storage::delete(storage_path("/app/public/") ."/".$post->thumbnail_url);
+            }
+
             $post->delete();
+
+            DB::commit();
 
             return response()->json(null, 204);
 
-        } catch (\Exception $e) {
+        } catch(\Exception $e) {
+            DB::rollBack();
             return response()->json(['message' => 'Unexpected server error'], 500);
         }
     }

@@ -9,29 +9,56 @@ class Post extends Model
     protected $table = "blog_posts";
 
     protected $fillable = [
-        "title",
-        "subtitle",
-        "excerpt",
-        "body",
+        // "title",
+        // "subtitle",
+        // "excerpt",
+        // "body",
         "thumbnail_url",
         "header_image_url",
         "author_id",
-        "slug",
+        // "slug",
         "publish_date"
     ];
 
+    protected $appends = ['categories','tags'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function author()
     {
         return $this->belongsTo("EPink\Blog\Models\Author");
     }
 
-    public function categories()
+    /**
+     * @return mixed
+     */
+    public function getCategoriesAttribute()
     {
-        return $this->belongsToMany("EPink\Blog\Models\Category", "EPink\Blog\Models\PostCategory");
+        return Category::
+                    leftjoin('blog_posts_categories as PC','PC.category_id', '=', 'blog_categories.id')
+                    ->where('PC.post_id',$this->id)
+                    ->get();
+
     }
 
-    public function tags()
+    /**
+     * @return mixed
+     */
+    public function getTagsAttribute()
     {
-        return $this->belongsToMany("EPink\Blog\Models\Tag", "EPink\Blog\Models\PostTag");
+        return Tag::
+        leftjoin('blog_posts_tags as PT','PT.tag_id', '=', 'blog_tags.id')
+            ->where('PT.post_id',$this->id)
+            ->get();
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function translations()
+    {
+        return $this->hasMany("EPink\Blog\Models\PostTranslation");
+    }
+
 }

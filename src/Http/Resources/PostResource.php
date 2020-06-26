@@ -16,20 +16,16 @@ class PostResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "title" => $this->title,
-            "subtitle" => $this->subtitle,
             "thumbnail_url" => $this->thumbnail_url,
             "header_image_url" => $this->header_image_url,
-            "excerpt" => $this->excerpt,
-            "body" => $this->body,
-            "slug" => $this->slug,
             "author_id" => $this->author_id,
             "author" => $this->author->name,
             "publish_date" => $this->publish_date ? str_replace('-', '/', $this->publish_date) : null,
-            "categories" => $this->categories->pluck("id"),
-            "tags" => $this->tags->pluck("id"),
+            "categories" => !empty($this->categories) ? $this->categories->pluck('category_id') : null,
+            "tags" => !empty($this->tags) ? $this->tags->pluck("tag_id") : null,
             "created_at" => str_replace('-', '/', $this->created_at),
-            "updated_at" => $this->updated_at
+            "updated_at" => $this->updated_at,
+            "translations" => !empty($this->translations) ? $this->translations()->select('code', 'language_code', 'translation')->get() : null,
         ];
     }
 }

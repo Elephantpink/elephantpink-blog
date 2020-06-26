@@ -17,12 +17,11 @@ class CreateBlogPostsTable extends Migration
             $table->bigIncrements('id');
             $table->text('title');
             $table->text('subtitle')->nullable();
-            $table->string('slug', 255)->unique();
-            $table->unsignedBigInteger('author_id');
             $table->text('excerpt')->nullable();
             $table->text('thumbnail_url')->nullable();
-            $table->text('header_image_url')->nullable();
             $table->longText('body')->nullable();
+            $table->string('slug', 255)->unique();
+            $table->unsignedBigInteger('author_id');
             $table->datetime('publish_date')->nullable();
             $table->timestamps();
 

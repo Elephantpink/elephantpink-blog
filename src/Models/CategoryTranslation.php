@@ -4,22 +4,19 @@ namespace EPink\Blog\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PostCategory extends Model
+class CategoryTranslation extends Model
 {
-    protected $table = "blog_posts_categories";
+    protected $table = "blog_categories_translations";
 
     protected $fillable = [
-        "post_id",
-        "category_id"
+        "category_id",
+        "language_code",
+        "translation",
     ];
-
-    public function post()
-    {
-        return $this->belongsTo("EPink\Blog\Models\Post");
-    }
 
     public function category()
     {
         return $this->belongsTo("EPink\Blog\Models\Category");
     }
+
 }

@@ -2,135 +2,191 @@
 
 namespace EPink\Blog\Http\Controllers;
 
+use EPink\Blog\Models\PostTranslation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use EPink\Blog\Http\Requests\StorePost;
+use EPink\Blog\Http\Requests\{PublishValidation, StorePost, StorePostTranslation};
 use EPink\Blog\Http\Resources\PostResource;
-use EPink\Blog\Models\Author;
-use EPink\Blog\Models\Category;
 use EPink\Blog\Models\Post;
 use EPink\Blog\Models\PostCategory;
 use EPink\Blog\Models\PostTag;
-use EPink\Blog\Models\Tag;
+use Illuminate\Support\Facades\Storage;
 
 class PublishController extends Controller
 {
+
+    /** @var array  */
+    // Note : set it on validateData
+    private $input_data = [];
+
+    /** @var null  */
+    // Note : set it on validateData
+    private $post_id = null;
+
     /**
      * Creates a post and relates it to categories and tags
-     * 
-     * @param  \Illuminate\Http\Request  $request
+     *
+     * @param  PublishValidation  $request
      * @return \Illuminate\Http\Response
      */
-    public function publishPost(Request $request)
+    public function publishPost(PublishValidation $request)
     {
-        $validated = $request->validate([
-            'post' => 'required',
-            'categories' => 'nullable',
-            'tags' => 'nullable'
-        ]);
 
         try {
-    
-            $post_request = new StorePost();
-    
-            $post_validated = Validator::make($validated["post"], $post_request->rules())->validate();
-            $new_post = Post::create($post_validated);
-    
-            $this->updatePostCategories($new_post, $validated["categories"]);
-            $this->updatePostTags($new_post, $validated["tags"]);
 
-            $new_post->refresh();
-    
-            return response()->json([
-                'post' => new PostResource($new_post)
-            ], 200);
+            return response()->json(['post' => $this->savePost($request)], 200);
 
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Unexpected server error'], 500);
+            return response()->json(['message' => 'Unexpected server error.'], 500);
         }
     }
 
-    public function editPost(Request $request, Post $post)
+    /**
+     * @param Request $request
+     * @param Post $post
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editPost(PublishValidation $request)
     {
-        $validated = $request->validate([
-            'post' => 'required',
-            'categories' => 'nullable',
-            'tags' => 'nullable',
-            'thumbnail' => 'nullable',
-            'header' => 'nullable'
-        ]);
-
         try {
-    
-            // $post_request = new StorePost();
-            $rules = [
-                "title" => "required",
-                "subtitle" => "nullable",
-                "thumbnail_url" => "nullable",
-                "header_image_url" => "nullable",
-                "body" => "nullable",
-                "author_id" => "required",
-                "slug" => "required|unique:blog_posts,slug,$post->id",
-                "publish_date" => "nullable",
-                "excerpt" => "nullable"
+
+            return response()->json(['post' => $this->savePost($request)], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Unexpected server error.'], 500);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return PostResource
+     * @throws \Exception
+     */
+    private function savePost(PublishValidation $request)
+    {
+        try {
+
+            $this->validateData($request);
+
+            $data = [
+                // 'slug'          =>  $this->input_data['post']['slug'],
+                'author_id'     =>  $this->input_data['post']['author_id'],
+                'publish_date'  =>  !empty($this->input_data['post']['publish_date']) ? $this->input_data['post']['publish_date']  : null
             ];
 
-            $post_validated = Validator::make(json_decode($validated["post"], true), $rules);
-            
-            if(!$post_validated->fails()) {
-                $post_validated = json_decode($validated["post"], true);
-                $post = Post::find($post_validated["id"]);
+            if(!empty($this->post_id))
+            {
 
-                $post->update($post_validated);
+                $post = Post::find($this->post_id);
 
-                if ($validated['header'] !== "null" && $validated['thumbnail'] !== "null" ) {
-                    $post->update([
-                        'thumbnail_url' => $this->storeBase64($validated['thumbnail'], substr($post->slug, 0, 20)),
-                        'header_image_url' => $this->storeFile($request, 'header', substr($post->slug, 0, 20))
-                    ]);
-                } else if ($validated['thumbnail'] !== "null") {
-                    $post->update([
-                        'thumbnail_url' => $this->storeBase64($validated['thumbnail'], substr($post->slug, 0, 20))
-                    ]);
-                }
+                $post->update($data);
 
-                $this->updatePostCategories($post, $post_validated["categories"]);
-                $this->updatePostTags($post, $post_validated["tags"]);
+            }else{
 
-                $post->refresh();
-        
-                return response()->json([
-                    'post' => new PostResource($post)
-                ], 200);
-
-            } else {
-                return response()->json(['errors' => $post_validated->errors()], 400);
+                $post = Post::create($data);
             }
 
+            $this->updateTranslations($post, $this->input_data['translations']);
+
+            $this->updatePostCategories($post, $this->input_data['categories']);
+
+            $this->updatePostTags($post, $this->input_data['tags']);
+
+            $post->refresh();
+
+            $this->storeImages($post , $this->input_data['post'], $post->translations()->select('translation')->where('code', 'slug')->get()[0]->translation);
+
+            DB::commit();
+
+            return new PostResource($post);
+
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Unexpected server error'], 500);
+            DB::rollBack();
+            throw new \Exception('Error saving post. '.$e->getMessage());
         }
     }
 
-    public function deletePost(Post $post)
+
+    /**
+     * @param $request
+     */
+    private function validateData($request)
     {
-        try {
-            
-            PostCategory::where('post_id', $post->id)->delete();
-            PostTag::where('post_id', $post->id)->delete();
+        //global validation
+        $validated = $request->validated();
 
-            $post->delete();
-            
-            return response()->json(null, 204);
-            
-        } catch(\Exception $e) {
-            return response()->json(['message' => 'Unexpected server error'], 500);
+        $this->post_id =  !empty($request->route('post')) ? $request->route('post') : null;
+
+        //specific validations
+        $this->input_data['post']           = Validator::make($validated["post"], (new StorePost())->rules($this->post_id))->validate();
+
+        $translations_rules = (new StorePostTranslation())->rules();
+
+        foreach ($validated["translations"] as $translation)
+        {
+            $this->input_data['translations'][]   = Validator::make($translation, $translations_rules)->validate();
+        }
+
+        $this->input_data['categories']     = !empty($validated["categories"])  ? $validated["categories"]  : null;
+        $this->input_data['tags']           = !empty($validated["tags"])        ? $validated["tags"]        : null;
+        $this->input_data['post']['new_thumbnail']  = !empty($validated['thumbnail'])   ? $validated['thumbnail']                 : null;
+        $this->input_data['post']['new_header']     = !empty($validated['header'])      ? $validated['header']                 : null;
+
+    }
+
+    /**
+     * @param Post $post
+     * @throws \Exception
+     */
+    private function storeImages(Post $post , $post_validated, $slug)
+    {
+        try{
+            // $filename = substr($post_validated['slug'], 0, 20);
+            $filename = substr($slug, 0, 20);
+
+            //remove prev images on update
+            if(!empty($post->thumbnail_url) && file_exists(storage_path("/app/public/") ."/".$post->thumbnail_url))
+            {
+                Storage::delete(storage_path("/app/public/") ."/".$post->thumbnail_url);
+            }
+
+            if(!empty($post->header_image_url) && file_exists(storage_path("/app/public/") ."/".$post->header_image_url))
+            {
+                Storage::delete(storage_path("/app/public/") ."/".$post->thumbnail_url);
+            }
+
+            if($post_validated['new_thumbnail'] && $post_validated['new_thumbnail'] != 'null') {
+                $thumbnail_url = $this->storeBase64($post_validated['new_thumbnail'], $filename);
+
+                $post->update(['thumbnail_url' => $thumbnail_url]);
+            }
+
+            if($post_validated['new_header'] && $post_validated['new_header'] != 'null') {
+                $header_image_url = $this->storeBase64($post_validated['new_header'], $filename);
+
+                $post->update(['header_image_url' => $header_image_url]);
+            }
+
+            // $thumbnail_url= $post_validated['thumbnail_url'] != 'null' ?
+            //     $this->storeBase64($post_validated['thumbnail_url'], $filename) :
+            //     null;
+
+            // $header_image_url = $post_validated['header_image_url'] != 'null' ?
+            //     $this->storeBase64($post_validated['header_image_url'], $filename) :
+            //     null;
+
+            // $post->update(['thumbnail_url' => $thumbnail_url,'header_image_url' => $header_image_url]);
+
+        }catch (\Throwable $exception)
+        {
+            throw new \Exception('Error saving post images. '.$exception->getMessage());
         }
     }
 
-    /** 
+    /**
      * Finds a post by id and relate it to an array of categories
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -142,15 +198,15 @@ class PublishController extends Controller
         ]);
 
         try {
-    
+
             $post = Post::find($validated["post_id"]);
-    
+
             if ($post) {
-    
+
                 $this->updatePostCategories($post, $validated["categories"]);
-    
+
                 return response()->json(null, 204);
-    
+
             } else {
                 return response()->json(['message' => 'Post not found'], 404);
             }
@@ -162,7 +218,7 @@ class PublishController extends Controller
 
     /**
      * Finds a post by id and relate it to an array of tags
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -174,15 +230,15 @@ class PublishController extends Controller
         ]);
 
         try {
-    
+
             $post = Post::find($validated["post_id"]);
-    
+
             if ($post) {
-    
+
                 $this->updatePostTags($post, $validated["tags"]);
-    
+
                 return response()->json(null, 204);
-                
+
             } else {
                 return response()->json(['message' => 'Post not found'], 404);
             }
@@ -194,57 +250,97 @@ class PublishController extends Controller
 
     /**
      * Updates the categories related to the post
-     * 
+     *
      * @param Post $post
      * @param array $categories
      */
     private function updatePostCategories (Post $post, $categories)
     {
-        $post_categories_removed = $post->categories->whereNotIn('id', $categories);
 
-        foreach ($post_categories_removed as $category) {
-            PostCategory::where('post_id', $post->id)
-                ->where('category_id', $category->id)
-                ->delete();
-        }
+        try{
 
-        foreach ($categories as $category) {
-            if (!$post->categories->find($category) && Category::find($category)) {
-                PostCategory::create([
-                    'post_id' => $post->id,
-                    'category_id' => $category,
-                ]);
+            PostCategory::where('post_id', $post->id)->delete();
+
+            if(!empty($categories))
+            {
+                //add new categories
+                foreach ($categories as $category) {
+
+                    PostCategory::create([ 'post_id' => $post->id,'category_id' => $category]);
+                }
             }
+
+        }catch (\Throwable $exception)
+        {
+            throw new \Exception('Error saving post categories. '.$exception->getMessage());
         }
+
     }
 
     /**
      * Updates the tags related to the post
-     * 
+     *
      * @param Post $post
      * @param array $tags
      */
     private function updatePostTags (Post $post, $tags)
     {
-        $post_tags_removed = $post->tags->whereNotIn('id', $tags);
 
-        foreach ($post_tags_removed as $tag) {
-            PostTag::where('post_id', $post->id)
-                ->where('tag_id', $tag->id)
-                ->delete();
-        }
+        try{
 
-        foreach ($tags as $tag) {
-            if (!$post->tags->find($tag) && Tag::find($tag)) {
-                PostTag::create([
-                    'post_id' => $post->id,
-                    'tag_id' => $tag,
-                ]);
+            PostTag::where('post_id', $post->id)->delete();
+
+            if(!empty($tags))
+            {
+                foreach ($tags as $tag) {
+
+                    PostTag::create(['post_id' => $post->id,'tag_id' => $tag]);
+                }
             }
+
+        }catch (\Throwable $exception)
+        {
+            throw new \Exception('Error saving post tags. '.$exception->getMessage());
         }
+
     }
 
-    public function storeBase64($image, $name = '') 
+    /**
+     *
+     * Updates translations related to a post
+     *
+     * @param Post $post
+     * @param $translations
+     */
+    private function updateTranslations(Post $post, $translations)
+    {
+
+        try{
+
+            PostTranslation::where('post_id', $post->id)->delete();
+
+            foreach ($translations as $translation)
+            {
+
+                $translation['post_id'] = $post->id;
+
+                PostTranslation::create($translation);
+            }
+
+        }catch (\Throwable $error)
+        {
+            throw new \Exception('Error saving post translations. '.$error->getMessage());
+        }
+
+    }
+
+
+    /**
+     * @param $image
+     * @param string $name
+     * @return string
+     */
+    public function storeBase64($image, $name = '')
     {
         $name = $name . '-thumb-' . rand(100000, 1000000);
         $img = preg_replace('/^data:image\/\w+;base64,/', '', $image);
@@ -262,6 +358,8 @@ class PublishController extends Controller
      * @param Request $request
      * @param $fieldName
      * @return null|string
+     * 
+     * DEPRECATED
      */
     public function storeFile($request, $fieldName, $filename = null)
     {

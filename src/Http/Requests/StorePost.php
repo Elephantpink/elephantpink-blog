@@ -21,34 +21,20 @@ class StorePost extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules($post_id = null)
     {
-        $postId = $this->route('post') ? $this->route('post')->id : null;
+        // $slug_rule = !empty($post_id) ? "required|unique:blog_posts,slug,$post_id" : "required|unique:blog_posts,slug";
 
-        if($postId) {
-            return [
-                "title" => "required",
-                "subtitle" => "nullable",
-                "thumbnail_url" => "nullable",
-                "header_image_url" => "nullable",
-                "body" => "nullable",
-                "author_id" => "required",
-                "slug" => "required|unique:blog_posts,slug,$postId",
-                "publish_date" => "nullable",
-                "excerpt" => "nullable"
-            ];
-        } else {
-            return [
-                "title" => "required",
-                "subtitle" => "nullable",
-                "thumbnail_url" => "nullable",
-                "header_image_url" => "nullable",
-                "body" => "nullable",
-                "author_id" => "required",
-                "slug" => "required|unique:blog_posts,slug",
-                "publish_date" => "nullable",
-                "excerpt" => "nullable"
-            ];
-        }
+        return [
+            //"title" => "required",
+            //"subtitle" => "nullable",
+            //"body" => "nullable",
+            "thumbnail_url"     => "nullable",
+            "header_image_url"  => "nullable",
+            "author_id"         => "required",
+            // "slug"              => $slug_rule,
+            "publish_date"      => "nullable",
+            // "excerpt"           => "nullable",
+        ];
     }
 }

@@ -28,7 +28,7 @@ class StoreCategory extends FormRequest
         if($categoryId) {
             return [
                 "name" => "required|max:255|unique:blog_categories,name,$categoryId",
-                "description" => "nullable"
+                "description" => "nullable",
             ];
         } else {
             return [

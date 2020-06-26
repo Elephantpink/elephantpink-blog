@@ -40,7 +40,7 @@ class AuthController extends Controller
       }
     }
     catch (\Exception $e) {
-      return response()->json(['message' => 'Unexpected server error']);
+      return response()->json(['message' => 'Unexpected server error. ' . $e->getMessage()]);
     }
   }
 }

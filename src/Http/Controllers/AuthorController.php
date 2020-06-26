@@ -18,9 +18,7 @@ class AuthorController extends Controller
     {
         try {
 
-            return response()->json([
-                'authors' => Author::all()
-            ], 200);
+            return response()->json(['authors' => Author::all()], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
@@ -51,7 +49,7 @@ class AuthorController extends Controller
             return response()->json(['message' => 'Unexpected server error'], 500);
         }
     }
-    
+
     /**
      * Display the specified resource.
      *
@@ -68,7 +66,7 @@ class AuthorController extends Controller
 
         } catch (\Exception $e) {
             return response()->json(['message' => 'Unexpected server error'], 500);
-        } 
+        }
     }
 
     /**
@@ -98,11 +96,11 @@ class AuthorController extends Controller
                         $validated['password'] = bcrypt($validated['password']);
                     } else {
                         unset($validated['password']);
-                    }   
+                    }
                 } else {
                     unset($validated['password']);
                 }
-                
+
                 $author->update($validated);
 
                 if ($author->is_disabled) {
@@ -110,7 +108,7 @@ class AuthorController extends Controller
                         'revoked' => true
                     ]);
                 }
-        
+
                 return response()->json([
                     'author' => $author
                 ], 200);
@@ -133,7 +131,7 @@ class AuthorController extends Controller
     public function destroy(Author $author)
     {
         try {
-            
+
             $author->delete();
 
             return response()->json(null, 204);
