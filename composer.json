@@ -44,6 +44,7 @@
     },
     "require": {
         "php": "^7.0",
+        "doctrine/dbal": "^2.10",
         "laravel/framework": ">=6.0",
         "laravel/passport": "^8.3"
     },

@@ -18,7 +18,7 @@ class UpdateNullableFieldsBlogPosts extends Migration
 
             $table->text('title')->nullable()->change();
             $table->text('subtitle')->nullable()->change();
-            $table->text('body')->nullable()->change();
+            $table->longText('body')->nullable()->change();
             $table->string('slug')->nullable()->change();
         });
     }
