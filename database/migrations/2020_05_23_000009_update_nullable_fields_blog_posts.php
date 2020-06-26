@@ -17,8 +17,6 @@ class UpdateNullableFieldsBlogPosts extends Migration
             $table->dropUnique('blog_posts_slug_unique');
 
             $table->text('title')->nullable()->change();
-            $table->text('subtitle')->nullable()->change();
-            $table->longText('body')->nullable()->change();
             $table->string('slug')->nullable()->change();
         });
     }
@@ -32,8 +30,6 @@ class UpdateNullableFieldsBlogPosts extends Migration
     {
         Schema::table('blog_posts', function (Blueprint $table) {
             $table->text('title')->nullable(false)->change();
-            $table->text('subtitle')->nullable(false)->change();
-            $table->text('body')->nullable(false)->change();
             $table->text('slug')->nullable(false)->unique()->change();
 
         });
